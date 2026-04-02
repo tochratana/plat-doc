@@ -204,6 +204,15 @@
       .mermaid svg {
         max-width: 100%;
         height: auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      .mermaid text,
+      .mermaid .nodeLabel,
+      .mermaid .edgeLabel,
+      .mermaid .label {
+        fill: #24292f !important;
+        color: #24292f !important;
       }
 
       @media (max-width: 720px) {
@@ -254,8 +263,21 @@
 
         window.mermaid.initialize({
           startOnLoad: false,
-          theme: "dark",
+          theme: "base",
           securityLevel: "strict",
+          themeVariables: {
+            background: "#ffffff",
+            primaryColor: "#f6f8fa",
+            primaryTextColor: "#24292f",
+            textColor: "#24292f",
+            lineColor: "#d0d7de",
+            nodeBorder: "#d0d7de",
+            clusterBkg: "#ffffff",
+            clusterBorder: "#d0d7de",
+            secondaryColor: "#f6f8fa",
+            tertiaryColor: "#ffffff",
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+          },
         });
 
         blocks.forEach(function (block) {
