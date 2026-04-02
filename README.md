@@ -370,3 +370,9 @@ This platform is a single deployment system with four moving parts:
 4. **GitOps** for Kubernetes desired state
 
 Together they create a full flow from GitHub repo to live app URL.
+
+## Detailed Guides
+
+If you want the step-by-step explanation of the Jenkins pipeline and the important files in `plateform-infra`, open:
+
+- [Jenkins and Infra Guide](./jenkins-and-infra-guide.md)
