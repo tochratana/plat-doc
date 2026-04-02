@@ -207,6 +207,20 @@
         max-width: 100%;
       }
 
+      .mermaid {
+        overflow-x: auto;
+        margin: 1.25rem 0;
+        padding: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 16px;
+        background: rgba(2, 6, 23, 0.35);
+      }
+
+      .mermaid svg {
+        max-width: 100%;
+        height: auto;
+      }
+
       @media (max-width: 720px) {
         .topbar {
           position: static;
@@ -249,5 +263,34 @@
         </article>
       </main>
     </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+      window.addEventListener("load", function () {
+        const blocks = Array.from(document.querySelectorAll("pre > code.language-mermaid"));
+        if (!blocks.length || !window.mermaid) {
+          return;
+        }
+
+        window.mermaid.initialize({
+          startOnLoad: false,
+          theme: "dark",
+          securityLevel: "strict",
+        });
+
+        blocks.forEach(function (block) {
+          const pre = block.parentElement;
+          const diagram = document.createElement("div");
+          diagram.className = "mermaid";
+          diagram.textContent = block.textContent;
+
+          if (pre && pre.parentElement) {
+            pre.parentElement.replaceChild(diagram, pre);
+          }
+        });
+
+        window.mermaid.run({ querySelector: ".mermaid" });
+      });
+    </script>
   </body>
 </html>

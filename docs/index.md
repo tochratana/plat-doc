@@ -380,8 +380,8 @@ Together they create a full flow from GitHub repo to live app URL.
 
 If you want the step-by-step explanation of the Jenkins pipeline and the important files in `plateform-infra`, open:
 
-- [Jenkins and Infra Guide](./jenkins-and-infra-guide/)
+- [Jenkins and Infra Guide]({{ '/jenkins-and-infra-guide/' | relative_url }})
 
 If you want the backend architecture, database, controller, API, and workflow explanation, open:
 
-- [Backend Guide](./backend-guide/)
+- [Backend Guide]({{ '/backend-guide/' | relative_url }})
