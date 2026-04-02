@@ -386,6 +386,6 @@ If you want the backend architecture, database, controller, API, and workflow ex
 
 - [Backend Guide]({{ '/backend-guide/' | relative_url }})
 
-If you want the full GitOps flow, repo structure, and Argo CD bootstrap explanation, open:
+If you want the full end-to-end client story, from login to deploy, logs, GitOps, and rollback, open:
 
-- [GitOps Guide]({{ '/gitops-guide/' | relative_url }})
+- [End-to-End Workflow]({{ '/end-to-end-workflow/' | relative_url }})

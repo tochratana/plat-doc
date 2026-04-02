@@ -1,12 +1,12 @@
 ---
 layout: default
-title: GitOps Guide
-permalink: /gitops-guide/
+title: End-to-End Workflow
+permalink: /end-to-end-workflow/
 ---
 
-# GitOps Guide
+# End-to-End Workflow
 
-This page explains how GitOps works in this platform, what each file in `plateform-gitops` is for, and how Jenkins, Argo CD, and Kubernetes fit together.
+This page explains how GitOps works in this platform, what each file in `plateform-gitops` is for, and how Jenkins, Argo CD, Kubernetes, and the database fit together.
 
 The short version is:
 
@@ -14,6 +14,10 @@ The short version is:
 - Jenkins writes the desired state into Git
 - Argo CD watches Git and applies the change
 - Kubernetes runs the app that Argo CD rendered from Git
+
+## One-line client explanation
+
+We build the app once, store the release state in Git, and let Argo CD keep the live cluster in sync automatically.
 
 ## What GitOps means here
 
@@ -29,95 +33,151 @@ Instead:
 
 That makes Git the audit trail for every live deployment.
 
-## Big Picture Workflow
+## Combined Workflow
 
 ```mermaid
 flowchart LR
-  User["User Browser"] --> FE["Frontend"]
-  FE --> BE["Backend API"]
-  BE --> JENKINS["Jenkins Pipeline"]
-  JENKINS --> HARBOUR["Harbor Registry"]
-  JENKINS --> GITOPS["plateform-gitops"]
-  GITOPS --> ARGO["Argo CD"]
-  ARGO --> K8S["Kubernetes Cluster"]
-  K8S --> INGRESS["ingress-nginx"]
-  INGRESS --> DNS["DNS / Domain"]
-  DNS --> User
+  Client["Client / Browser"]
+  Frontend["Frontend (Next.js)"]
+  GitHub["GitHub (login + source repo)"]
+  Backend["Backend API"]
+  DB["PostgreSQL"]
+  Jenkins["Jenkins Pipeline"]
+  Harbor["Harbor Registry"]
+  GitOps["GitOps Repo"]
+  ArgoCD["Argo CD"]
+  K8s["Kubernetes Cluster"]
+  Ingress["ingress-nginx"]
+  DNS["DNS / Domain"]
+
+  Client -->|browse platform| Frontend
+  Frontend -->|sign in with GitHub| GitHub
+  GitHub -->|token / repo access| Frontend
+  Frontend -->|deploy request: repo, branch, app name, domain| Backend
+  Frontend <--> |WebSocket: live Jenkins logs| Backend
+  GitHub -->|optional push webhook| Backend
+  Backend -->|store project + version history| DB
+  DB -->|previous image tag for rollback| Backend
+  Backend -->|trigger build or rollback| Jenkins
+  Jenkins -->|build + scan + push image| Harbor
+  Jenkins -->|write release values| GitOps
+  Jenkins -->|build log events| Backend
+  GitOps -->|watched by| ArgoCD
+  ArgoCD -->|render Helm + apply| K8s
+  K8s -->|service + ingress| Ingress
+  Ingress -->|public host| DNS
+  DNS --> Client
 ```
 
-## GitOps flow step by step
+## What each step means
 
-### 1. The user clicks Deploy
+### 1. The client opens the app
 
-The frontend sends the deploy request to the backend.
+The user visits the platform in the browser and lands on the frontend.
 
-The backend already knows:
+The frontend is the screen the client sees:
 
+- project list
+- deploy form
+- live logs
+- live URL
+- success and error messages
+
+### 2. The user signs in with GitHub
+
+The frontend asks GitHub to authenticate the user.
+
+After login, the frontend gets access to the user's repositories and sends the platform token to the backend.
+
+### 3. The user creates or deploys a project
+
+When the user clicks **Deploy**, the frontend sends the deploy request to the backend.
+
+The backend receives:
+
+- repository URL
+- branch
+- project name
 - user id
 - workspace id
-- repository URL
-- selected branch
+- app port
+- platform domain
 - optional custom domain
-- current deployment status
 
-### 2. The backend triggers Jenkins
+### 4. The backend stores the project and version history
 
-The backend asks Jenkins to start the pipeline.
+The backend writes the project data into PostgreSQL.
 
-Jenkins receives the app metadata and uses it to build:
+This is where we keep:
 
-- the image name
-- the image tag
-- the release folder
-- the ingress host
-- the namespace target
+- current deploy status
+- live URL
+- selected branch
+- image tags
+- previous versions for rollback
+- webhook and auto-deploy state
 
-### 3. Jenkins builds and publishes the image
+### 5. The backend triggers Jenkins
 
-Jenkins then:
+The backend asks Jenkins to run the pipeline.
 
-1. checks out the user repo
-2. detects the framework
-3. generates a Dockerfile if needed
-4. builds the image
-5. scans the image
-6. pushes the image to Harbor
+Jenkins then receives the metadata it needs to build the app:
 
-The image tag is immutable, so each deploy points to one specific build.
+- repository URL
+- branch
+- project name
+- user id
+- workspace id
+- domain information
 
-### 4. Jenkins updates `plateform-gitops`
+### 6. Jenkins builds the app image
+
+Jenkins checks out the code, detects the framework, and builds the Docker image.
+
+What happens inside Jenkins:
+
+1. checkout the user repo
+2. checkout the shared infra repo
+3. detect the framework
+4. prepare or reuse a Dockerfile
+5. build the image
+6. scan the image
+7. upload scan results
+8. push the image to Harbor
+
+### 7. Jenkins updates GitOps
 
 This is the GitOps handoff.
 
-Jenkins updates the tenant app folder in GitOps, usually:
+Jenkins writes the live values into the GitOps repo, usually under:
 
 ```text
 apps/<workspaceId>/<userId>/<projectName>/
 ```
 
-The release values written there normally include:
+The release values usually include:
 
-- `image.repository`
-- `image.tag`
-- `name`
-- `namespace`
-- `host`
-- `ingress.tls`
+- image repository
+- image tag
+- app name
+- namespace
+- host
+- ingress settings
 - app port
 - framework
 
-### 5. Argo CD detects the Git change
+### 8. Argo CD watches Git and syncs the cluster
 
-Argo CD watches the GitOps repo.
+Argo CD watches `plateform-gitops`.
 
 When Jenkins pushes a new commit:
 
 - Argo CD sees the new desired state
-- Argo CD generates the Helm manifest
-- Argo CD compares it with the live cluster
-- Argo CD syncs the difference into Kubernetes
+- Argo CD renders the Helm chart
+- Argo CD compares the rendered result with the live cluster
+- Argo CD applies the difference into Kubernetes
 
-### 6. Kubernetes serves the app
+### 9. Kubernetes serves the app
 
 After the sync:
 
@@ -125,6 +185,27 @@ After the sync:
 - Service exposes the pod internally
 - Ingress exposes the host externally
 - DNS points the hostname to the ingress endpoint
+
+### 10. The frontend shows the live URL and logs
+
+After the deploy succeeds, the frontend can show:
+
+- the live domain
+- the current status
+- the Jenkins logs
+- copy/open actions for the client
+
+The log stream is a WebSocket connection from the browser to the backend, and the backend relays Jenkins log events in real time.
+
+### 11. Rollback uses the same chain
+
+If the client chooses to roll back to a previous version:
+
+1. the frontend sends a rollback request to the backend
+2. the backend looks up the previous image tag in PostgreSQL
+3. the backend asks Jenkins to deploy that earlier version again
+4. Jenkins updates GitOps with the old tag
+5. Argo CD syncs the cluster back to the previous state
 
 ## `plateform-gitops` folder map
 
@@ -201,6 +282,34 @@ Current pattern:
 - namespace: `user-<userId>`
 
 This is why the release name must stay short enough for Helm.
+
+## Clean wording for the drawing
+
+If you want to explain the diagram to a client, use these names:
+
+| In the sketch | Better wording |
+| --- | --- |
+| `Next.ts` | `Frontend (Next.js)` |
+| `backend get log from jenkins using SSE` | `Backend streams Jenkins logs to the browser over WebSocket` |
+| `goharber` | `Harbor Registry` |
+| `create project in argocd` | `Write the desired state to GitOps, then Argo CD syncs automatically` |
+| `update gitops` | `Jenkins commits the new release values to the GitOps repo` |
+| `login with provider` | `Sign in with GitHub` |
+| `call api` | `Frontend talks to the backend API` |
+| `streaming logs` | `Live build logs` |
+
+## How to explain it to a client
+
+You can describe the whole platform in one minute like this:
+
+1. The client opens the frontend and signs in with GitHub.
+2. The frontend sends the deploy request to the backend.
+3. The backend stores the project and starts Jenkins.
+4. Jenkins builds the app image, scans it, and pushes it to Harbor.
+5. Jenkins updates the GitOps repo with the new release values.
+6. Argo CD reads GitOps and applies the new version to Kubernetes.
+7. The frontend shows the live URL and live build logs.
+8. If needed, the client can roll back to a previous version from the database history.
 
 ## Why the repo structure matters
 
