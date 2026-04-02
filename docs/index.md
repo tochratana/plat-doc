@@ -1,3 +1,8 @@
+---
+layout: default
+title: Monolotic App Platform
+---
+
 # Monolotic App Platform
 
 Monolotic App Platform is a multi-tenant GitOps deployment platform for building, scanning, publishing, and exposing user applications from a single control plane.
