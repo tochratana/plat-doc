@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ page.title | default: site.title }}</title>
+    <meta name="description" content="{{ site.description | escape }}" />
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: rgba(15, 23, 42, 0.78);
+        --panel-border: rgba(148, 163, 184, 0.22);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --accent-strong: #7c3aed;
+        --link: #7dd3fc;
+        --code-bg: #111827;
+        --shadow: 0 18px 60px rgba(2, 6, 23, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 30%),
+          radial-gradient(circle at top right, rgba(56, 189, 248, 0.16), transparent 24%),
+          linear-gradient(180deg, #020617 0%, #0f172a 100%);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      a {
+        color: var(--link);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .shell {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 16px;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding: 16px 20px;
+        border: 1px solid var(--panel-border);
+        border-radius: 18px;
+        background: rgba(15, 23, 42, 0.72);
+        backdrop-filter: blur(14px);
+        box-shadow: var(--shadow);
+      }
+
+      .brand {
+        display: grid;
+        gap: 4px;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .brand-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+
+      .brand-subtitle {
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .nav a {
+        padding: 8px 12px;
+        border: 1px solid rgba(125, 211, 252, 0.24);
+        border-radius: 999px;
+        background: rgba(2, 6, 23, 0.35);
+        color: var(--text);
+        font-size: 0.92rem;
+        text-decoration: none;
+      }
+
+      .nav a:hover {
+        border-color: rgba(125, 211, 252, 0.5);
+        background: rgba(2, 6, 23, 0.56);
+      }
+
+      main {
+        padding-bottom: 48px;
+      }
+
+      article {
+        padding: 28px;
+        border: 1px solid var(--panel-border);
+        border-radius: 24px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        line-height: 1.7;
+      }
+
+      h1, h2, h3, h4 {
+        line-height: 1.25;
+      }
+
+      h1 {
+        margin-top: 0;
+        font-size: clamp(2rem, 4vw, 3rem);
+      }
+
+      h2 {
+        margin-top: 2rem;
+        padding-top: 0.25rem;
+        border-top: 1px solid rgba(148, 163, 184, 0.16);
+        font-size: 1.45rem;
+      }
+
+      h3 {
+        margin-top: 1.5rem;
+        font-size: 1.15rem;
+      }
+
+      p, li {
+        color: var(--text);
+      }
+
+      p, ul, ol, table, pre, blockquote {
+        margin-bottom: 1rem;
+      }
+
+      ul, ol {
+        padding-left: 1.35rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 14px;
+      }
+
+      th, td {
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        padding: 10px 12px;
+        vertical-align: top;
+      }
+
+      th {
+        background: rgba(15, 23, 42, 0.85);
+        text-align: left;
+      }
+
+      code {
+        padding: 0.18rem 0.4rem;
+        border-radius: 6px;
+        background: rgba(15, 23, 42, 0.88);
+        color: #e0f2fe;
+        font-size: 0.95em;
+      }
+
+      pre {
+        overflow: auto;
+        padding: 16px 18px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 16px;
+        background: var(--code-bg);
+      }
+
+      pre code {
+        padding: 0;
+        background: transparent;
+      }
+
+      blockquote {
+        margin-left: 0;
+        padding: 0.75rem 1rem;
+        border-left: 4px solid var(--accent);
+        background: rgba(56, 189, 248, 0.08);
+        color: #dbeafe;
+      }
+
+      img {
+        max-width: 100%;
+      }
+
+      @media (max-width: 720px) {
+        .topbar {
+          position: static;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .nav {
+          justify-content: flex-start;
+        }
+
+        .shell {
+          padding: 14px;
+        }
+
+        article {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="eyebrow">Platform Docs</div>
+          <div class="brand-title">{{ site.title | default: "Monolotic App Platform Docs" }}</div>
+          <div class="brand-subtitle">{{ site.description }}</div>
+        </div>
+        <nav class="nav" aria-label="Documentation navigation">
+          <a href="{{ '/' | relative_url }}">Home</a>
+          <a href="{{ '/backend-guide/' | relative_url }}">Backend</a>
+          <a href="{{ '/jenkins-and-infra-guide/' | relative_url }}">Jenkins &amp; Infra</a>
+        </nav>
+      </header>
+
+      <main>
+        <article>
+          {{ content }}
+        </article>
+      </main>
+    </div>
+  </body>
+</html>

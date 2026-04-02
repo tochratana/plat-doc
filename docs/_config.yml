@@ -1,0 +1,4 @@
+title: Monolotic App Platform Docs
+description: Documentation for the backend, Jenkins pipeline, infra, and GitOps flow
+markdown: kramdown
+permalink: pretty
