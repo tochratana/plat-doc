@@ -385,3 +385,7 @@ If you want the step-by-step explanation of the Jenkins pipeline and the importa
 If you want the backend architecture, database, controller, API, and workflow explanation, open:
 
 - [Backend Guide]({{ '/backend-guide/' | relative_url }})
+
+If you want the full GitOps flow, repo structure, and Argo CD bootstrap explanation, open:
+
+- [GitOps Guide]({{ '/gitops-guide/' | relative_url }})

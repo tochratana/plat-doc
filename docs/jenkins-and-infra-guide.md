@@ -7,6 +7,7 @@ title: Jenkins Pipeline and Infra Guide
 
 This document explains how the Jenkins pipeline works in this platform and what each important file inside `plateform-infra` is used for.
 
+repo : https://github.com/tochratana/platform-infra
 It is written for the people who will maintain, extend, or troubleshoot the deployment flow.
 
 ## Big Picture
