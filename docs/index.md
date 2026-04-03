@@ -382,6 +382,10 @@ If you want the step-by-step explanation of the Jenkins pipeline and the importa
 
 - [Jenkins and Infra Guide]({{ '/jenkins-and-infra-guide/' | relative_url }})
 
+If you want to understand how Argo CD works, why one ApplicationSet can create many Applications, and how the platform keeps app deployments separate, open:
+
+- [Argo CD Explained]({{ '/argocd-explain/' | relative_url }})
+
 If you want the backend architecture, database, controller, API, and workflow explanation, open:
 
 - [Backend Guide]({{ '/backend-guide/' | relative_url }})
