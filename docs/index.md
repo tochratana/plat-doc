@@ -397,3 +397,7 @@ If you want the full end-to-end client story, from login to deploy, logs, GitOps
 If you want the most production-oriented version of the flow, including login bootstrap, workspace, namespace, project types, and deploy completion, open:
 
 - [Production Flow]({{ '/production-flow/' | relative_url }})
+
+If you want a shorter, client-friendly version with simpler wording and a presentation-style diagram, open:
+
+- [Client Story]({{ '/client-story/' | relative_url }})
