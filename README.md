@@ -375,8 +375,8 @@ Together they create a full flow from GitHub repo to live app URL.
 
 If you want the step-by-step explanation of the Jenkins pipeline and the important files in `plateform-infra`, open:
 
-- [Jenkins and Infra Guide](./jenkins-and-infra-guide.md)
+- [Jenkins and Infra Guide](./docs/jenkins-and-infra-guide.md)
 
 If you want the backend architecture, database, controller, API, and workflow explanation, open:
 
-- [Backend Guide](./backend-guide.md)
+- [Backend Guide](./docs/backend-guide.md)

@@ -393,3 +393,7 @@ If you want the backend architecture, database, controller, API, and workflow ex
 If you want the full end-to-end client story, from login to deploy, logs, GitOps, and rollback, open:
 
 - [End-to-End Workflow]({{ '/end-to-end-workflow/' | relative_url }})
+
+If you want the most production-oriented version of the flow, including login bootstrap, workspace, namespace, project types, and deploy completion, open:
+
+- [Production Flow]({{ '/production-flow/' | relative_url }})
